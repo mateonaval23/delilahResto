@@ -69,11 +69,11 @@ route.put("/", (req, res) => {
     });
 });
 
-route.delete("/", (req, res) => {
-    let productos = req.body;
+route.delete("/:id", (req, res) => {
+    let productoId = req.params.id;
     sql.query('DELETE FROM platos WHERE id = :id', 
         { replacements: {
-                id : productos.id
+                id : productoId
             } 
         }
     ).then(result =>{

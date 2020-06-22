@@ -18,6 +18,52 @@ function registrarUsuario(user){
     );
 }
 
+const checkMyInfo = (req, res, next) =>{
+    try{
+        
+        const token = req.headers.authorization.split(' ')[1];
+         
+        const verifyToken = jwt.verify(token, secretWord);
+        if(verifyToken){
+            req.data = verifyToken;
+            let userInfo = req.data.data[0];
+            if(userInfo.id != req.params.id){
+                res.status(401).send();
+            }
+            else{
+                return next()
+            }
+            
+        }
+
+    }catch(err){
+        res.json({error: "Error al validar usuario"});
+    }
+}
+
+const rolAdmin = (req, res, next) => {
+    try{
+        
+        const token = req.headers.authorization.split(' ')[1];
+        const verifyToken = jwt.verify(token, secretWord);
+        if(verifyToken){
+            req.data = verifyToken;
+            let userInfo = req.data.data[0];
+            console.log(userInfo);
+            if(userInfo.tipousuario != "A"){
+                res.status(401).send();
+            }
+            else{
+                return next()
+            }
+            
+        }
+
+    }catch(err){
+        res.json({error: "Error al validar usuario"});
+    }
+}
+
  route.post('/login', (req, res) =>{
     const {username, pass} = req.body;
 
@@ -46,7 +92,7 @@ route.post('/registrar', (req, res) => {
 
 
 
-route.get("/", (req, res) => {
+route.get("/", rolAdmin, (req, res) => {
     sql.query('SELECT * FROM usuarios', 
         { type : sql.QueryTypes.SELECT }
     ).then(result =>{
@@ -55,48 +101,48 @@ route.get("/", (req, res) => {
 
 })
 
-route.post("/", (req, res) => {
-    // let productos = req.body;
-    // sql.query('INSERT INTO platos(nombre, urlimagen, precio) VALUES (:nombre , :urlimagen, :precio)', 
-    //     { replacements: {
-    //             nombre : productos.nombre,
-    //             urlimagen : productos.urlImagen,
-    //             precio : productos.precio
-    //         } 
-    //     }
-    // ).then(result =>{
-    //     res.status(200).json({message: "El producto se creo correctamente", producto: productos});
-    // });
-    
+
+route.get("/:id", checkMyInfo, (req, res) => {
+    const userId = req.params.id;
+    sql.query('SELECT * FROM usuarios where id = :id ', 
+        {replacements: {id : userId}, type : sql.QueryTypes.SELECT }
+    ).then(result =>{
+        res.json(result);
+    });
+
 })
 
-route.put("/", (req, res) => {
-    // let productos = req.body;
-    // sql.query('UPDATE platos SET nombre = :nombre, urlimagen = :urlimagen, precio = :precio WHERE id = :id', 
-    //     { replacements: {
-    //             id : productos.id,
-    //             nombre : productos.nombre,
-    //             urlimagen : productos.urlImagen,
-    //             precio : productos.precio
-    //         } 
-    //     }
-    // ).then(result =>{
-    //     res.status(200).send(productos);
-    // });
+
+route.put("/:id", checkMyInfo, (req, res) => {
+    const usuario = req.body;
+    const userId = req.params.id;
+    sql.query('UPDATE usuarios SET nombres = :nombres, correo = :correo, username = :username, password = :password, direccion = :direccion, telefono = :telefono,  WHERE id = :id', 
+        { replacements: {
+            id : userId,
+            nombres: usuario.nombres,
+            correo: usuario.correo,
+            username : usuario.username,
+            password : usuario.password,
+            direccion : usuario.direccion,
+            telefono : usuario.telefono
+            } 
+        }
+    ).then(result =>{
+        res.status(200).send(usuario);
+    });
 });
 
-route.delete("/", (req, res) => {
-    // let productos = req.body;
-    // sql.query('DELETE FROM platos WHERE id = :id', 
-    //     { replacements: {
-    //             id : productos.id
-    //         } 
-    //     }
-    // ).then(result =>{
-    //     console.log(result);
-    //     res.status(204);
-    //     res.send();
-    // });
+route.delete("/:id", checkMyInfo, (req, res) => {
+    const userId = req.params.id;
+    sql.query('DELETE FROM usuario WHERE id = :id', 
+        { replacements: {
+                id : userId
+            } 
+        }
+    ).then(result =>{
+        res.status(204);
+        res.send();
+    });
 });
 
 

@@ -10,5 +10,9 @@ const sequelize = new Sequelize('mysql://root@localhost:3306/delilahresto');
 4. Cuando haya finalizado toda la instalación, deberan ejecutar el comando `npm run start`. Este mismo se encuentra configurado como script en el archivo `package.json`.
 5. Para consultar los endpoint de la Web API, pueden consultar el archivo spec.yml referido en la especificacion de Open API (Swagger).
 
+## Tablas maestras y sus datos
+Los usuarios se diferencian en `A` para administrador y `U` para usuario comun.
 
+La tabla medio de pago actualmente tiene 3 medios de pago disponibles.
 
+Por ahora los estados estan en un campo string, proximanente se agregara en una nueva version los campos en una nueva tabla.

@@ -45,6 +45,29 @@ const rolAdmin = (req, res, next) => {
     }
 }
 
+const checkMyInfo = (req, res, next) =>{
+    try{
+        
+        const token = req.headers.authorization.split(' ')[1];
+         
+        const verifyToken = jwt.verify(token, secretWord);
+        if(verifyToken){
+            req.data = verifyToken;
+            let userInfo = req.data.data[0];
+            if(userInfo.id != req.params.id){
+                res.status(401).send();
+            }
+            else{
+                return next()
+            }
+            
+        }
+
+    }catch(err){
+        res.json({error: "Error al validar usuario"});
+    }
+}
+
 route.use(validateUser);
 
 function insertarPedido(pedido){
@@ -78,6 +101,15 @@ route.post("/", (req, res) => {
 route.get("/", rolAdmin, (req, res) => {
     sql.query('SELECT * FROM pedidos p inner join pedidosdetalle pd on p.id = pd.pedidosId', 
         { type : sql.QueryTypes.SELECT }
+    ).then(result =>{
+        res.json(result);
+    });
+})
+
+route.get("/usuario/:id/pedidos", checkMyInfo, (req, res) => {
+    const userId = req.params.id;
+    sql.query('SELECT * FROM pedidos p inner join pedidosdetalle pd on p.id = pd.pedidosId WHERE p.usuarioId = 1', 
+        {replacements : {id: userId}, type : sql.QueryTypes.SELECT }
     ).then(result =>{
         res.json(result);
     });
