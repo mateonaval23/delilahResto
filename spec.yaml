@@ -1,0 +1,348 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: This is a simple API
+  version: 1.0.0
+  title: Simple Inventory API
+tags:
+  - name: Usuarios
+    description: Administracion de usuarios
+  - name: Platos
+    description: Administracion de los platos
+  - name: Pedidos
+    description: Administracion de pedidos
+paths:
+  /usuarios:
+    get:
+      tags:
+        - Usuarios
+      summary: Listado de usaurios
+      description: Endpoint destinado a listar todos los usuarios del sistema
+      responses:
+        '200':
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/usuarios'
+  '/usuarios/{id}':
+    get:
+      tags:
+        - Usuarios
+      summary: Obtener usuario por id
+      description: Endpoint destinado a obtener el usuario por id sistema
+      parameters:
+        - name: id
+          in: path
+          description: Id de usuario a retornar
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/usuarios'
+  /usuarios/login:
+    post:
+      tags:
+        - Usuarios
+      summary: Metodo de logeo para iniciar la api
+      description: Este metodo permitira loguearse con la web api y obtener el token.
+      responses:
+        '200':
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/token'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  description: Nombre de usuario
+                  type: string
+                password:
+                  description: Contraseña
+                  type: string
+  /usuarios/registrar:
+    post:
+      tags:
+        - Usuarios
+      summary: Metodo que permite registrar un nuevo usuario
+      description: Este metodo permitira generar un nuevo usuario a traves del registro.
+      responses:
+        '200':
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/token'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/usuarios'
+  /platos:
+    get:
+      tags:
+        - Platos
+      summary: Obtener todos los platos
+      description: >-
+        Endpoint destinado a obtener todos los platos. Solo puede ejecutarse
+        siendo admin
+      responses:
+        '200':
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/platos'
+        '403':
+          description: No autorizado.
+    post:
+      tags:
+        - Platos
+      summary: Generacion de un nuevo plato
+      description: >-
+        Este metodo permite ingresar un nuevo plato solo a los usuarios que sean
+        administradores.
+      responses:
+        '200':
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/platos'
+        '403':
+          description: No autorizado.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  description: Nombre del plato
+                  type: string
+                urlImagen:
+                  description: Direccion de la url correspondiente a la imagen si existe
+                  type: string
+                precio:
+                  description: Precio del plato
+                  type: number
+                  format: double
+    put:
+      tags:
+        - Platos
+      summary: Metodo para modificar un plato ya ingresado
+      description: Este metodo sera accesible solo por usuarios administradores.
+      responses:
+        '200':
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/platos'
+        '403':
+          description: No autorizado.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  description: Id del plato
+                  type: integer
+                nombre:
+                  description: Nombre del plato
+                  type: string
+                urlImagen:
+                  description: Direccion de la url correspondiente a la imagen si existe
+                  type: string
+                precio:
+                  description: Precio del plato
+                  type: number
+                  format: double
+  '/platos/{id}':
+    delete:
+      tags:
+        - Platos
+      summary: Metodo que permitira eliminar un plato por su id
+      description: >-
+        Este metodo elimina el plato elegido y solo es posible ejecutarlo como
+        usuario administrador.
+      parameters:
+        - name: id
+          in: path
+          description: ID del plato a eliminar
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/platos'
+        '403':
+          description: No autorizado.
+  /pedidos:
+    get:
+      tags:
+        - Pedidos
+      summary: Listado de pedidos
+      description: Listado de todos los pedidos solo accesible por un usuario admin
+      responses:
+        '200':
+          description: Busqueda de todos los pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/usuarios'
+        '403':
+          description: No autorizado.
+    post:
+      tags:
+        - Pedidos
+      summary: Generacion de un nuevo pedido
+      description: Este metodo permite ingresar un nuevo pedido.
+      responses:
+        '200':
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pedidos'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/pedidos'
+  '/usuario/{id}/pedidos':
+    get:
+      tags:
+        - Pedidos
+      summary: 'Obtener pedido por id, para ver mis pedidos'
+      description: Este endpoint me permite ver mis pedidos solamente
+      parameters:
+        - name: id
+          in: path
+          description: Id del usuario para ver el pedido
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pedidos'
+  '/pedidos/{id}':
+    delete:
+      tags:
+        - Pedidos
+      summary: Metodo que permitira eliminar un pedido por su id
+      description: >-
+        Este metodo elimina el pedido solo es posible ejecutarlo como usuario
+        administrador.
+      parameters:
+        - name: id
+          in: path
+          description: Id de pedido a eliminar
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/platos'
+        '403':
+          description: No autorizado.
+components:
+  schemas:
+    usuarios:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        nombres:
+          type: string
+          example: Juan Ignacio Perez
+        correo:
+          type: string
+          example: example@example.com
+        username:
+          type: string
+          example: usuarioEjemplo87
+        password:
+          type: string
+          example: 123asd
+        direccion:
+          type: string
+          example: pergamino 211
+        telefono:
+          type: string
+          example: '1164490000'
+        tipousuario:
+          type: integer
+          example: 2
+    pedidos:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        hora:
+          type: string
+          format: date-time
+        estado:
+          type: string
+          example: nuevo
+        usuarioId:
+          type: integer
+          example: 3
+        mediosdepagoid:
+          type: integer
+          example: 3
+    platos:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        nombre:
+          type: string
+          example: Hamburguesa con queso + papa fritas
+        urlImagen:
+          type: string
+          example: images/ejemplo.png
+        precio:
+          type: number
+          format: double
+          example: '23,00'
+    token:
+      type: object
+      properties:
+        token:
+          type: string
