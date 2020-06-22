@@ -1,7 +1,35 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const sql = require('../data/mysql');
+const secretWord = "s3cr3tW0rd";
 const route = express.Router();
 
+
+// Validar jwt
+
+const rolesAdmin = (req, res, next) => {
+    try{
+        
+        const token = req.headers.authorization.split(' ')[1];
+        const verifyToken = jwt.verify(token, secretWord);
+        if(verifyToken){
+            req.data = verifyToken;
+            let userInfo = req.data.data[0];
+            if(req.method != "GET" && userInfo.tipousuario != "A"){
+                res.status(401).send("Error");
+            }
+            else{
+                return next()
+            }
+            
+        }
+
+    }catch(err){
+        res.json({error: "Error al validar usuario"});
+    }
+}
+
+route.use(rolesAdmin);
 
 route.get("/", (req, res) => {
     sql.query('SELECT * FROM platos', 
