@@ -53,3 +53,7 @@ CREATE TABLE pedidosdetalle(
     foreign key (pedidosId) references pedidos(id),
     foreign key (platosId) references platos(id)
 );
+
+-- Insert de usuario Administrador base.
+INSERT INTO usuarios(nombres, correo, username, password, direccion, telefono, tipousuario)
+VALUES ('Administrador', 'matias.lopezbarrios@gmail.com', 'admin', 'Ab123456', 'av carrasco', '1164491540', 'A');
