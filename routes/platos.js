@@ -37,7 +37,6 @@ route.get("/", (req, res) => {
     ).then(result =>{
         res.json(result);
     });
-
 })
 
 route.post("/", (req, res) => {

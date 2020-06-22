@@ -26,9 +26,8 @@ CREATE TABLE mediosdepago(
 
 CREATE TABLE pedidos(
 	id int not null auto_increment,
-    numero int not null,
     hora datetime not null,
-    estado varchar(1),
+    estado varchar(150),
     usuarioId int not null,
     mediodepagoId int not null,
     primary key (id),
@@ -57,3 +56,13 @@ CREATE TABLE pedidosdetalle(
 -- Insert de usuario Administrador base.
 INSERT INTO usuarios(nombres, correo, username, password, direccion, telefono, tipousuario)
 VALUES ('Administrador', 'matias.lopezbarrios@gmail.com', 'admin', 'Ab123456', 'av carrasco', '1164491540', 'A');
+
+
+-- Insert medios de pago
+
+INSERT INTO mediosdepago(descripcion, activo)
+values ('Efectivo', 'A');
+INSERT INTO mediosdepago(descripcion, activo)
+values ('Tarjeta Credito', 'A');
+INSERT INTO mediosdepago(descripcion, activo)
+values ('Tarjeta Debito', 'A');
